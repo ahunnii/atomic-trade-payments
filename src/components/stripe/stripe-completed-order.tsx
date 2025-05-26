@@ -1,10 +1,13 @@
 import type Stripe from "stripe";
+import { formatEmailDomain } from "../../lib/email";
 
-import { StoreOrder } from "~/types";
+import type { StoreOrder } from "../../types";
+
 import { stripeClient } from "../../clients/stripe";
 import { OrderHeader } from "../shared/order-header";
 import { OrderStatusCard } from "../shared/order-status-card";
 import { OrderSummaryCard } from "../shared/order-summary-card";
+import { CopyableSessionId } from "../shared/session-id-copy-to";
 import { ShipmentStatusCard } from "../shared/shipment-status-card";
 import { ShippingBillingInfoCard } from "../shared/shipping-billing-info-card";
 
@@ -12,19 +15,22 @@ type Props = {
   session_id: string;
   backToAccount?: boolean;
   order?: StoreOrder | null;
+  handleCartCleanup?: () => void;
 };
+
 export const StripeCompletedOrder = async ({
   session_id,
   order,
   backToAccount = false,
+  handleCartCleanup,
 }: Props) => {
   let isSuccess = false;
   let errorMessage = "";
   let session = null;
-  // let order = null;
   let paymentIntent = null;
   let latestCharge = null;
 
+  const supportEmail = `support@${formatEmailDomain()}`;
   try {
     if (!stripeClient) {
       throw new Error("Stripe client not initialized");
@@ -37,24 +43,11 @@ export const StripeCompletedOrder = async ({
     paymentIntent = session.payment_intent as Stripe.PaymentIntent;
     latestCharge = paymentIntent.latest_charge as Stripe.Charge;
 
-    if (isSuccess) {
-      // Delete the cart after successful payment
-      // const cartId = await getCartId();
-      // if (cartId) {
-      //   await api.cart.delete(cartId);
-      //   await clearCartId();
-      // }
-      // order = await db.order.findFirst({
-      //   where: {
-      //     metadata: {
-      //       equals: {
-      //         stripeCheckoutSessionId: session.id,
-      //       },
-      //     },
-      //   },
-      //   include: { fulfillment: true },
-      // });
-    } else {
+    if (isSuccess && handleCartCleanup) {
+      handleCartCleanup();
+    }
+
+    if (!isSuccess) {
       errorMessage = "Your payment was not successful. Please try again.";
     }
   } catch (error) {
@@ -79,17 +72,44 @@ export const StripeCompletedOrder = async ({
     );
   }
 
+  // If payment succeeded but order is null, show support message
+  if (!order) {
+    return (
+      <div className="mx-auto mt-10 max-w-2xl rounded-xl border bg-yellow-50 p-8 shadow-lg">
+        <h2 className="mb-4 text-2xl font-semibold text-yellow-700">
+          Payment Successful - Order Processing Issue
+        </h2>
+        <p className="mb-4 text-yellow-600">
+          Your payment was successful, but we encountered an issue processing
+          your order. Please contact our support team with the following session
+          ID:
+        </p>
+        <CopyableSessionId sessionId={session_id} />
+        <p className="mt-4 text-sm text-yellow-600">
+          Our team will help resolve this issue and ensure your order is
+          properly processed. You can reach us at{" "}
+          <a
+            href={`mailto:${supportEmail}`}
+            className="font-medium text-yellow-700 underline hover:text-yellow-800"
+          >
+            {supportEmail}
+          </a>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto mt-10 max-w-5xl px-2 md:px-0">
       <OrderHeader
         backToAccount={backToAccount}
-        orderNumber={order?.orderNumber ?? session.id}
+        orderNumber={order.orderNumber}
         createdAt={new Date(session.created * 1000)}
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <OrderStatusCard />
-        <ShipmentStatusCard status={order?.fulfillment?.status ?? "PENDING"} />
+        <ShipmentStatusCard status={order.fulfillment?.status ?? "PENDING"} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

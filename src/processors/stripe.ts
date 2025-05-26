@@ -254,4 +254,17 @@ export class StripePaymentProcessor implements PaymentProcessor {
 
     return { stripeCustomerId: stripeCustomer.id };
   }
+
+  async getLineItems(props: { sessionId: string }) {
+    if (!stripeClient) {
+      throw new Error("Stripe client not initialized");
+    }
+
+    const sessionLineItems = await stripeClient.checkout.sessions.listLineItems(
+      props.sessionId,
+      { expand: ["data.price.product"] },
+    );
+
+    return sessionLineItems.data;
+  }
 }

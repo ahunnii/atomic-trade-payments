@@ -1,4 +1,4 @@
-import { formatCurrency } from "~/lib/currency";
+import { formatCurrency } from "../../lib/currency";
 
 type Item = {
   id: string;
@@ -37,7 +37,7 @@ export const OrderSummaryCard = ({
               </div>
             </div>
             <div className="text-base font-semibold text-gray-800">
-              {formatCurrency(item.priceInCents * item.quantity)}
+              {formatCurrency(item.priceInCents)}
             </div>
           </div>
         ))}

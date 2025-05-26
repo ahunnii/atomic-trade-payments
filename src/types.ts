@@ -176,3 +176,10 @@ export type StoreOrder = {
   shippingInCents: number;
   totalInCents: number;
 };
+
+export type LineItemData = {
+  id: string;
+  name: string;
+  quantity: number;
+  priceInCents: number;
+};

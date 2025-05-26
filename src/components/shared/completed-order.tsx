@@ -1,6 +1,7 @@
 import { CheckCircle, XCircle } from "lucide-react";
 
-import { StoreOrder } from "~/types";
+import type { StoreOrder } from "../../types";
+
 import { paymentServiceType } from "../..";
 import { ManualCompletedOrder } from "../manual/manual-completed-order";
 import { StripeCompletedOrder } from "../stripe/stripe-completed-order";
@@ -9,11 +10,13 @@ type Props = {
   session_id?: string | null;
   order?: StoreOrder | null;
   backToAccount?: boolean;
+  handleCartCleanup?: () => void;
 };
 export const CompletedOrder = ({
   session_id,
   order,
   backToAccount = false,
+  handleCartCleanup,
 }: Props) => {
   if (paymentServiceType === "stripe" && session_id) {
     return (
@@ -21,12 +24,19 @@ export const CompletedOrder = ({
         session_id={session_id}
         backToAccount={backToAccount}
         order={order}
+        handleCartCleanup={handleCartCleanup}
       />
     );
   }
 
   if (order)
-    return <ManualCompletedOrder order={order} backToAccount={backToAccount} />;
+    return (
+      <ManualCompletedOrder
+        order={order}
+        backToAccount={backToAccount}
+        handleCartCleanup={handleCartCleanup}
+      />
+    );
 
   return (
     <>

@@ -24,6 +24,8 @@ export interface PaymentProcessor {
 
   createCustomer(props: CreateCustomerData): Promise<Record<string, string>>;
 
+  getLineItems(props: { sessionId: string }): Promise<unknown[]>;
+
   // createPaymentLink(
   //   props: PaymentLinkData,
   // ): Promise<{ sessionId: string; sessionUrl: string }>;

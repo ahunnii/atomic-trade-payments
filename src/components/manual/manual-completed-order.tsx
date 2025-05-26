@@ -1,4 +1,5 @@
-import { StoreOrder } from "~/types";
+import type { StoreOrder } from "../../types";
+
 import { OrderHeader } from "../shared/order-header";
 import { OrderStatusCard } from "../shared/order-status-card";
 import { OrderSummaryCard } from "../shared/order-summary-card";
@@ -8,10 +9,12 @@ import { ShippingBillingInfoCard } from "../shared/shipping-billing-info-card";
 type Props = {
   backToAccount?: boolean;
   order?: StoreOrder | null;
+  handleCartCleanup?: () => void;
 };
 export const ManualCompletedOrder = async ({
   backToAccount = false,
   order,
+  handleCartCleanup,
 }: Props) => {
   if (!order) {
     return (
@@ -24,6 +27,10 @@ export const ManualCompletedOrder = async ({
         </p>
       </div>
     );
+  }
+
+  if (handleCartCleanup) {
+    handleCartCleanup();
   }
 
   return (
