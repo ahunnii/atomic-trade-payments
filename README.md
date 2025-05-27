@@ -4,8 +4,8 @@ A React package for handling payments and orders in your e-commerce application.
 
 ## Features
 
-- 🛍️ E-commerce payment processing
-- 💳 Multiple payment provider support
+- 🛍️ E-commerce payment processing for Next.js applications
+- 💳 Multiple payment provider support (Stripe, etc.)
 - 🔒 Secure payment handling
 - ⚛️ React components for easy integration
 - 📦 TypeScript support
@@ -44,6 +44,14 @@ const result = await processor.processPayment({
   // Payment details
 });
 ```
+
+## Environment Variables
+
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` - The publishable key for the Stripe API
+- `STRIPE_SECRET_KEY` - The secret key for the Stripe API
+- `NEXT_PUBLIC_HOSTNAME` - The hostname of the store (i.e. `https://example.com`)
+- `NEXT_PUBLIC_STORAGE_URL` - The URL of the storage service (i.e. `https://storage.example.com`)
+- `STRIPE_WEBHOOK_SECRET` - The webhook secret for the Stripe API
 
 ## Development
 

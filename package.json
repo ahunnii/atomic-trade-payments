@@ -1,7 +1,7 @@
 {
   "name": "@atomic-trade/payments",
   "author": "Andrew Hunn",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": false,
   "type": "module",
   "main": "dist/index.js",

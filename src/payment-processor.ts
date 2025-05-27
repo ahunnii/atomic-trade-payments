@@ -2,7 +2,9 @@ import type {
   CheckoutData,
   CreateCustomerData,
   FormattedCheckoutSessionData,
+  InvoiceData,
   PaymentIntentData,
+  PaymentLinkData,
 } from "./types";
 
 export interface PaymentProcessor {
@@ -26,11 +28,13 @@ export interface PaymentProcessor {
 
   getLineItems(props: { sessionId: string }): Promise<unknown[]>;
 
-  // createPaymentLink(
-  //   props: PaymentLinkData,
-  // ): Promise<{ sessionId: string; sessionUrl: string }>;
+  createPaymentLink(
+    props: PaymentLinkData,
+  ): Promise<{ sessionId: string; sessionUrl: string }>;
 
-  // createInvoice(
-  //   props: InvoiceData,
-  // ): Promise<{ invoiceId: string; invoiceUrl: string }>;
+  createInvoice(props: InvoiceData): Promise<{
+    invoiceId: string;
+    invoiceUrl: string;
+    customerMetadata?: Record<string, string>;
+  }>;
 }

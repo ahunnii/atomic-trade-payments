@@ -100,6 +100,8 @@ export type InvoiceData = {
     lastName: string;
     metadata: Record<string, string> | null;
   };
+
+  hasTaxCollection?: boolean;
 };
 
 export type OrderItem = {
