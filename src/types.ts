@@ -40,6 +40,7 @@ export type FormattedCheckoutSessionData = {
   storeId?: string;
   sessionId?: string;
   orderMetadata?: Record<string, string> | null;
+  intentId?: string;
 };
 
 export type PaymentLinkData = {
@@ -184,4 +185,14 @@ export type LineItemData = {
   name: string;
   quantity: number;
   priceInCents: number;
+};
+
+export type CreatePaymentIntentData = {
+  paymentIntent: unknown;
+  intentId: string;
+};
+
+export type CreatePaymentIntentProps = {
+  amount: number;
+  currency?: string;
 };

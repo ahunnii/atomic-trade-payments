@@ -2,7 +2,7 @@ import { type PaymentProcessor } from "./payment-processor";
 import { StripePaymentProcessor } from "./processors/stripe";
 
 export class PaymentProcessorFactory {
-  static paymentProcessorType = "manual";
+  static paymentProcessorType = process.env.PAYMENT_PROCESSOR_TYPE ?? "stripe";
 
   static setPaymentProcessorType(type: string) {
     PaymentProcessorFactory.paymentProcessorType = type;
@@ -13,7 +13,13 @@ export class PaymentProcessorFactory {
 
     switch (processorType) {
       case "stripe":
-        return new StripePaymentProcessor();
+        if (
+          process.env.STRIPE_SECRET_KEY === undefined ||
+          process.env.STRIPE_SECRET_KEY === ""
+        ) {
+          throw new Error("STRIPE_SECRET_KEY is not set");
+        }
+        return new StripePaymentProcessor(process.env.STRIPE_SECRET_KEY);
 
       default:
         throw new Error("Unsupported payment processor type");

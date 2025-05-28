@@ -1,6 +1,8 @@
 import type {
   CheckoutData,
   CreateCustomerData,
+  CreatePaymentIntentData,
+  CreatePaymentIntentProps,
   FormattedCheckoutSessionData,
   InvoiceData,
   PaymentIntentData,
@@ -8,14 +10,39 @@ import type {
 } from "./types";
 
 export interface PaymentProcessor {
-  createCheckoutSession(
-    props: CheckoutData,
+  createCustomer(props: CreateCustomerData): Promise<Record<string, string>>;
+
+  createPaymentLink(
+    props: PaymentLinkData,
   ): Promise<{ sessionId: string; sessionUrl: string }>;
 
+  invoice: InvoiceProcessor;
+  transaction: TransactionProcessor;
+  checkout: CheckoutProcessor;
+}
+
+export interface InvoiceProcessor {
+  createInvoice(props: InvoiceData): Promise<{
+    invoiceId: string;
+    invoiceUrl: string;
+    customerMetadata?: Record<string, string>;
+  }>;
+}
+
+export interface TransactionProcessor {
   getPaymentIntent(props: {
     paymentIntentId: string;
   }): Promise<PaymentIntentData>;
 
+  createPaymentIntent(
+    props: CreatePaymentIntentProps,
+  ): Promise<CreatePaymentIntentData>;
+}
+
+export interface CheckoutProcessor {
+  createCheckoutSession(
+    props: CheckoutData,
+  ): Promise<{ sessionId: string; sessionUrl: string }>;
   getCheckoutSession(props: {
     sessionId: string;
   }): Promise<FormattedCheckoutSessionData>;
@@ -24,17 +51,9 @@ export interface PaymentProcessor {
     session: unknown;
   }): Promise<FormattedCheckoutSessionData>;
 
-  createCustomer(props: CreateCustomerData): Promise<Record<string, string>>;
-
   getLineItems(props: { sessionId: string }): Promise<unknown[]>;
+}
 
-  createPaymentLink(
-    props: PaymentLinkData,
-  ): Promise<{ sessionId: string; sessionUrl: string }>;
-
-  createInvoice(props: InvoiceData): Promise<{
-    invoiceId: string;
-    invoiceUrl: string;
-    customerMetadata?: Record<string, string>;
-  }>;
+export interface CustomerProcessor {
+  createCustomer(props: CreateCustomerData): Promise<Record<string, string>>;
 }

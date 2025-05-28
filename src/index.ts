@@ -1,8 +1,10 @@
 import type Stripe from "stripe";
+
 import { PaymentProcessorFactory } from "./factory";
 
-export const paymentService =
-  PaymentProcessorFactory.createPaymentService("stripe");
+export const paymentService = PaymentProcessorFactory.createPaymentService(
+  process.env.PAYMENT_PROCESSOR_TYPE ?? "stripe",
+);
 
 export const paymentServiceType = PaymentProcessorFactory.paymentProcessorType;
 
